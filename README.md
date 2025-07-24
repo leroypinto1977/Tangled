@@ -1,8 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tangled - Psychological Assessment
+
+A modern psychological test application built with Next.js that presents visual preference questions to assess cognitive patterns and psychological tendencies.
+
+## Features
+
+- **Clean, minimal design** with modern UI/UX
+- **Two-part assessment**:
+  - Part 1: 15 questions with 4 image options each
+  - Part 2: 14 questions with 2 image options each
+- **Interactive confirmation dialog** before starting the test
+- **Real-time progress tracking** with question counter
+- **Card-based interface** for image selection
+- **Responsive design** for all screen sizes
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Then run the development server:
 
 ```bash
 npm run dev
@@ -16,18 +35,37 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── layout.tsx          # Root layout
+│   ├── page.tsx           # Landing page
+│   ├── test/
+│   │   └── page.tsx       # Test interface
+│   └── globals.css        # Global styles
+├── components/
+│   └── ConfirmationDialog.tsx  # Confirmation modal
+└── .github/
+    └── copilot-instructions.md # AI coding guidelines
+```
 
-## Learn More
+## Technology Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type safety and better developer experience
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Hooks** - State management and side effects
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How It Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Landing Page**: Users see test information and click "Proceed to Test"
+2. **Confirmation Dialog**: A modal asks "Are you sure you want to proceed?"
+3. **Test Interface**: 29 questions with image selection, progress tracking
+4. **Question Flow**:
+   - Questions 1-15: 4 image options each
+   - Questions 16-29: 2 image options each
 
 ## Deploy on Vercel
 
