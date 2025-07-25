@@ -1501,7 +1501,12 @@ function ResultsContent() {
                                 Combined Result (Purple + Green + Pink)
                               </div>
                               <div className="font-mono font-bold text-black text-xl">
-                                {combinedFinalResult || "(Empty)"}
+                                {/* Ensure only unique letters are shown in the final result */}
+                                {combinedFinalResult
+                                  ? [
+                                      ...new Set(combinedFinalResult.split("")),
+                                    ].join("")
+                                  : "(Empty)"}
                               </div>
                               <div className="text-xs text-gray-600 mt-2">
                                 Final combined result from all three boxes

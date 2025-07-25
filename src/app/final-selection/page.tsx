@@ -51,8 +51,8 @@ function FinalSelectionContent() {
     },
   ];
 
+  // Get both the selected answers and option IDs from URL params
   useEffect(() => {
-    // Get both the selected answers and option IDs from URL params
     const answers = searchParams.get("answers");
     const optionIds = searchParams.get("optionIds");
 
@@ -68,6 +68,14 @@ function FinalSelectionContent() {
 
     setLoading(false);
   }, [searchParams]);
+
+  // Auto-navigate to results when all selections are complete
+  useEffect(() => {
+    if (sectionSelections.every((selection) => selection !== "")) {
+      handleProceed();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionSelections]);
 
   const handleOptionSelect = (optionId: string) => {
     const newSelections = [...sectionSelections];
@@ -174,120 +182,78 @@ function FinalSelectionContent() {
             ))}
           </div>
         </div>
+        /* Selection Interface */
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
+          <h2 className="text-xl font-medium text-gray-900 text-center mb-8">
+            Your selected options from {currentSectionData.sectionName}:
+          </h2>
 
-        {!allSelectionsComplete ? (
-          /* Selection Interface */
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-            <h2 className="text-xl font-medium text-gray-900 text-center mb-8">
-              Your selected options from {currentSectionData.sectionName}:
-            </h2>
+          {/* Show the user's selected options for this section */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentSectionData.questions.map((question, questionIndex) => {
+              const selectedOptionId =
+                currentSectionData.selectedOptions[questionIndex];
+              const selectedOption = question.options.find(
+                (opt) => opt.id === selectedOptionId
+              );
 
-            {/* Show the user's selected options for this section */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentSectionData.questions.map((question, questionIndex) => {
-                const selectedOptionId =
-                  currentSectionData.selectedOptions[questionIndex];
-                const selectedOption = question.options.find(
-                  (opt) => opt.id === selectedOptionId
-                );
+              if (!selectedOption) return null;
 
-                if (!selectedOption) return null;
-
-                return (
-                  <div
-                    key={question.id}
-                    className={`cursor-pointer group border-2 rounded-lg transition-all duration-200 ${
-                      sectionSelections[currentSection] === selectedOptionId
-                        ? "border-blue-500 shadow-md transform scale-105"
-                        : "border-gray-200 hover:border-gray-300 hover:shadow-md"
-                    }`}
-                    onClick={() => handleOptionSelect(selectedOptionId)}
-                  >
-                    <div className="p-4">
-                      <div className="text-sm text-gray-600 mb-3">
-                        Question {question.id}: {question.question}
-                      </div>
-
-                      <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden mb-3">
-                        <img
-                          src={selectedOption.imagePath}
-                          alt={`Your choice for Q${question.id}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-
-                      {/* <div className="text-center">
-                        <div className="text-xs text-gray-500 mb-1">
-                          Option Value
-                        </div>
-                        <div className="font-mono text-sm text-gray-700 bg-gray-100 px-2 py-1 rounded">
-                          {selectedOption.value}
-                        </div>
-                      </div> */}
-
-                      {sectionSelections[currentSection] ===
-                        selectedOptionId && (
-                        <div className="mt-3 flex justify-center">
-                          <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                            <svg
-                              className="w-4 h-4 text-white"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </div>
-                        </div>
-                      )}
+              return (
+                <div
+                  key={question.id}
+                  className={`cursor-pointer group border-2 rounded-lg transition-all duration-200 ${
+                    sectionSelections[currentSection] === selectedOptionId
+                      ? "border-blue-500 shadow-md transform scale-105"
+                      : "border-gray-200 hover:border-gray-300 hover:shadow-md"
+                  }`}
+                  onClick={() => handleOptionSelect(selectedOptionId)}
+                >
+                  <div className="p-4">
+                    <div className="text-sm text-gray-600 mb-3">
+                      Question {question.id}: {question.question}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          /* All selections complete - show summary */
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
-            <h2 className="text-xl font-medium text-gray-900 text-center mb-6">
-              Final Selections Complete
-            </h2>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {sections.map((section, index) => {
-                const selectedOptionId = sectionSelections[index];
-                const question = section.questions.find((q) =>
-                  q.options.some((opt) => opt.id === selectedOptionId)
-                );
-                const selectedOption = question?.options.find(
-                  (opt) => opt.id === selectedOptionId
-                );
+                    <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden mb-3">
+                      <img
+                        src={selectedOption.imagePath}
+                        alt={`Your choice for Q${question.id}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
 
-                return (
-                  <div key={index} className="text-center">
-                    <h3 className="font-medium text-gray-900 mb-3">
-                      {section.sectionName}
-                    </h3>
-                    {selectedOption && (
-                      <div className="bg-gray-50 rounded-lg p-4">
-                        <div className="font-mono text-sm text-gray-700 bg-white px-2 py-1 rounded mb-2">
-                          {selectedOption.value}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          From Question {question?.id}
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">
+                        Option Value
+                      </div>
+                      <div className="font-mono text-sm text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                        {selectedOption.value}
+                      </div>
+                    </div>
+
+                    {sectionSelections[currentSection] === selectedOptionId && (
+                      <div className="mt-3 flex justify-center">
+                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-4 h-4 text-white"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
                         </div>
                       </div>
                     )}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
-        )}
-
+        </div>
         {/* Navigation */}
         <div className="text-center">
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

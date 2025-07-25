@@ -71,6 +71,21 @@ export default function TestPage() {
           </div>
         </div>
 
+        {/* Back Button */}
+        <div className="mb-4">
+          <button
+            className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg shadow-sm hover:bg-gray-100 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            onClick={() => {
+              if (currentQuestion > 0) {
+                setCurrentQuestion(currentQuestion - 1);
+              }
+            }}
+            disabled={currentQuestion === 0}
+          >
+            ← Back
+          </button>
+        </div>
+
         {/* Progress bar */}
         <div className="w-full bg-gray-200 rounded-full h-2 mb-8">
           <div
