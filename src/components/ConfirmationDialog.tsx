@@ -19,7 +19,8 @@ export default function ConfirmationDialog({
         </h3>
 
         <p className="text-gray-600 mb-6">
-          Once you start the test, you'll need to complete all 29 questions.
+          Once you start the test, you&apos;ll need to complete all 29
+          questions.
         </p>
 
         <div className="flex gap-3 justify-end">

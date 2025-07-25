@@ -1,34 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
-import { allQuestions, QuestionOption } from "@/data/questionData";
-import { saveTestSession } from "@/utils/scoreTracker";
-import { evaluateTest } from "@/utils/tangledEvaluation";
-
-// Results interface for tracking selected values
-interface TestResults {
-  [key: string]: number;
-}
-
-// Calculate results using the proper Tangled evaluation system
-const calculateResults = (selectedOptions: string[]) => {
-  // Get the selected answer values (not option IDs)
-  const selectedAnswers: string[] = [];
-
-  selectedOptions.forEach((optionId, questionIndex) => {
-    const question = allQuestions[questionIndex];
-    const option = question.options.find((opt) => opt.id === optionId);
-    if (option) {
-      selectedAnswers.push(option.value);
-    }
-  });
-
-  // Use the new evaluation system
-  const evaluation = evaluateTest(selectedAnswers);
-
-  return evaluation.characterCounts;
-};
+import { allQuestions } from "@/data/questionData";
 
 export default function TestPage() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -134,11 +107,18 @@ export default function TestPage() {
                               group-hover:shadow-md transform group-hover:scale-105"
                 >
                   <div className="aspect-square relative bg-gray-100">
-                    <Image
+                    <img
                       src={option.imagePath}
                       alt={`Option ${option.id} - ${option.value}`}
-                      fill
-                      className="object-cover"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error(
+                          "Image failed to load:",
+                          option.imagePath
+                        );
+                        e.currentTarget.style.backgroundColor = "#f3f4f6";
+                        e.currentTarget.style.border = "2px dashed #d1d5db";
+                      }}
                     />
                   </div>
 

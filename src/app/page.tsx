@@ -59,7 +59,8 @@ export default function Home() {
             </div>
 
             <p>
-              Each question simply asks: <em>"Which image do you like?"</em>
+              Each question simply asks:{" "}
+              <em>&ldquo;Which image do you like?&rdquo;</em>
               Trust your instincts and select the image that appeals to you
               most.
             </p>

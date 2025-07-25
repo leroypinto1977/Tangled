@@ -167,7 +167,7 @@ export class TangledEvaluator {
   }
 
   // Step 8: Put result in green box
-  private putInGreenBox(supplementaryResult: string): void {
+  private putInGreenBox(_supplementaryResult: string): void {
     // Add supplementary result to green box
     // This is handled in the final step
   }

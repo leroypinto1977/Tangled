@@ -67,7 +67,7 @@ class ScoreTracker {
 
       const sessions = JSON.parse(stored);
       // Convert timestamp strings back to Date objects
-      return sessions.map((session: any) => ({
+      return sessions.map((session: TestSession) => ({
         ...session,
         timestamp: new Date(session.timestamp),
       }));

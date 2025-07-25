@@ -13,152 +13,15 @@ import {
   type EvaluationResult,
 } from "@/utils/tangledEvaluation";
 import { allQuestions } from "@/data/questionData";
-import {
-  personalityInterpretations,
-  getPersonalityTraits,
-} from "@/data/personalityInterpretations";
+import { getPersonalityTraits } from "@/data/personalityInterpretations";
 
 // Results interface
 interface TestResults {
   [key: string]: number;
 }
 
-// Psychological interpretations for each character with detailed descriptions
-const interpretations = {
-  A: {
-    name: "Analytical Thinking",
-    description:
-      "You approach problems systematically and prefer logical, step-by-step analysis. You value evidence-based decision making and tend to break down complex situations into manageable components.",
-  },
-  B: {
-    name: "Behavioral Action",
-    description:
-      "You are action-oriented and prefer hands-on approaches. You tend to learn by doing and are comfortable taking initiative to implement solutions quickly.",
-  },
-  C: {
-    name: "Creative Conceptualization",
-    description:
-      "You excel at generating innovative ideas and thinking outside conventional boundaries. You approach challenges with imagination and value artistic expression.",
-  },
-  D: {
-    name: "Detail-Focused Processing",
-    description:
-      "You have a natural attention to detail and prefer thorough, methodical approaches. You value precision and accuracy in your work and thinking processes.",
-  },
-  E: {
-    name: "Emotional Intelligence",
-    description:
-      "You are highly attuned to emotions - both your own and others'. You value empathy and consider emotional factors when making decisions.",
-  },
-  F: {
-    name: "Flexible Adaptation",
-    description:
-      "You adapt easily to changing circumstances and prefer flexible approaches. You're comfortable with ambiguity and can adjust your strategies as needed.",
-  },
-  G: {
-    name: "Goal-Oriented Strategic",
-    description:
-      "You are naturally goal-focused and excel at strategic planning. You prefer structured approaches to achieving objectives and value long-term thinking.",
-  },
-  H: {
-    name: "Holistic Perspective",
-    description:
-      "You see the big picture and understand how different elements connect. You prefer comprehensive approaches that consider multiple viewpoints and systems.",
-  },
-  I: {
-    name: "Intuitive Insight",
-    description:
-      "You rely on your intuition and inner wisdom. You often sense patterns and connections that aren't immediately obvious to others.",
-  },
-  J: {
-    name: "Judgmental Evaluation",
-    description:
-      "You naturally evaluate and assess situations carefully. You value making well-considered judgments and prefer closure in decision-making.",
-  },
-  K: {
-    name: "Kinesthetic Learning",
-    description:
-      "You learn best through physical experience and hands-on activities. You prefer active engagement and movement in your learning and work processes.",
-  },
-  L: {
-    name: "Logical Reasoning",
-    description:
-      "You excel at logical reasoning and rational analysis. You prefer fact-based arguments and systematic approaches to problem-solving.",
-  },
-  M: {
-    name: "Memory-Based Learning",
-    description:
-      "You have strong memory capabilities and learn well from past experiences. You value building on previous knowledge and proven methods.",
-  },
-  N: {
-    name: "Numerical Processing",
-    description:
-      "You are comfortable with numbers and quantitative analysis. You prefer data-driven approaches and value measurable outcomes.",
-  },
-  O: {
-    name: "Organized Structure",
-    description:
-      "You prefer organized, structured environments and approaches. You value order, planning, and systematic methods of working.",
-  },
-  P: {
-    name: "People-Centered Social",
-    description:
-      "You are naturally people-focused and value social connections. You prefer collaborative approaches and consider the human element in all decisions.",
-  },
-  Q: {
-    name: "Questioning Investigation",
-    description:
-      "You have a naturally curious mind and ask probing questions. You value research and investigation before forming conclusions.",
-  },
-  R: {
-    name: "Reflective Contemplation",
-    description:
-      "You prefer thoughtful reflection and contemplation. You value taking time to process information deeply before acting or deciding.",
-  },
-  S: {
-    name: "Sequential Processing",
-    description:
-      "You prefer step-by-step, sequential approaches to tasks and learning. You value order and progression in your thinking and work methods.",
-  },
-  T: {
-    name: "Theoretical Abstract",
-    description:
-      "You enjoy theoretical concepts and abstract thinking. You prefer working with ideas and theories rather than concrete, practical applications.",
-  },
-  U: {
-    name: "Understanding Focus",
-    description:
-      "You prioritize deep understanding and comprehension. You prefer to fully grasp concepts before moving forward and value clarity in communication.",
-  },
-  V: {
-    name: "Visual Spatial",
-    description:
-      "You think and process information visually. You prefer visual representations, spatial relationships, and image-based learning and communication.",
-  },
-  W: {
-    name: "Whole-System Thinking",
-    description:
-      "You naturally see systems and connections. You prefer holistic approaches that consider the entire ecosystem or environment.",
-  },
-  X: {
-    name: "Experimental Exploration",
-    description:
-      "You enjoy experimenting and exploring new possibilities. You're comfortable with trial-and-error approaches and value innovation.",
-  },
-  Y: {
-    name: "Yielding Collaboration",
-    description:
-      "You value collaboration and are willing to yield for the greater good. You prefer cooperative approaches and value team harmony.",
-  },
-  Z: {
-    name: "Zone-Focused Concentration",
-    description:
-      "You have the ability to focus intensely on specific areas or topics. You prefer deep, concentrated work and value specialized expertise.",
-  },
-};
 export default function ResultsPage() {
   const searchParams = useSearchParams();
-  const [analysis, setAnalysis] = useState<ScoreAnalysis | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [evaluationDetails, setEvaluationDetails] =
     useState<EvaluationResult | null>(null);
@@ -189,9 +52,6 @@ export default function ResultsPage() {
   // Get detailed analysis
   useEffect(() => {
     if (Object.keys(results).length > 0) {
-      const detailedAnalysis = getResultsWithAnalysis(results);
-      setAnalysis(detailedAnalysis);
-
       // If we have session data, get the evaluation details
       if (sessionId) {
         const session = scoreTracker.getSession(sessionId);
@@ -272,13 +132,10 @@ export default function ResultsPage() {
     }
   }, [results, sessionId]);
 
-  // Find dominant traits
+  // Find dominant traits (currently unused)
   const sortedResults = Object.entries(results)
     .sort(([, a], [, b]) => b - a)
     .filter(([, value]) => value > 0);
-
-  const dominantTrait = sortedResults[0];
-  const secondaryTrait = sortedResults[1];
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">

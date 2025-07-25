@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import Image from "next/image";
 import { allQuestions } from "@/data/questionData";
 import { evaluateTest } from "@/utils/tangledEvaluation";
 import { saveTestSession } from "@/utils/scoreTracker";
@@ -211,11 +209,10 @@ export default function FinalSelectionPage() {
                       </div>
 
                       <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden mb-3">
-                        <Image
+                        <img
                           src={selectedOption.imagePath}
                           alt={`Your choice for Q${question.id}`}
-                          fill
-                          className="object-cover"
+                          className="w-full h-full object-cover"
                         />
                       </div>
 

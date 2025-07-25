@@ -1,5 +1,0 @@
-<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#f3f4f6"/>
-  <rect x="40" y="40" width="120" height="120" fill="#6b7280"/>
-  <text x="100" y="180" text-anchor="middle" font-family="Arial" font-size="12" fill="#374151">Option B</text>
-</svg>
