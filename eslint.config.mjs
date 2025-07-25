@@ -27,6 +27,9 @@ const eslintConfig = [
 
       // Allow unescaped entities in JSX
       "react/no-unescaped-entities": "off",
+
+      // Allow comments inside JSX children
+      "react/jsx-no-comment-textnodes": "off",
     },
   },
 ];
