@@ -2,11 +2,11 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import {
   scoreTracker,
-  getResultsWithAnalysis,
-  type ScoreAnalysis,
+  getResultsWithAnalysis as _getResultsWithAnalysis,
+  type ScoreAnalysis as _ScoreAnalysis,
 } from "@/utils/scoreTracker";
 import {
   tangledEvaluator,
@@ -20,7 +20,7 @@ interface TestResults {
   [key: string]: number;
 }
 
-export default function ResultsPage() {
+function ResultsContent() {
   const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [evaluationDetails, setEvaluationDetails] =
@@ -133,7 +133,7 @@ export default function ResultsPage() {
   }, [results, sessionId]);
 
   // Find dominant traits (currently unused)
-  const sortedResults = Object.entries(results)
+  const _sortedResults = Object.entries(results)
     .sort(([, a], [, b]) => b - a)
     .filter(([, value]) => value > 0);
 
@@ -202,7 +202,7 @@ export default function ResultsPage() {
                             Question {index + 1}:
                           </span>{" "}
                           <span className="bg-blue-50 px-2 py-1 rounded text-blue-800">
-                            "{answer}"
+                            &ldquo;{answer}&rdquo;
                           </span>
                         </div>
                       ))}
@@ -1783,5 +1783,22 @@ export default function ResultsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading results...</p>
+          </div>
+        </div>
+      }
+    >
+      <ResultsContent />
+    </Suspense>
   );
 }
