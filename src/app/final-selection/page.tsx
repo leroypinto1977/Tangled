@@ -1,3 +1,4 @@
+// eslint-disable-next-line react/jsx-no-comment-textnodes
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
