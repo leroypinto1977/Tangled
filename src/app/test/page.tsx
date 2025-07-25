@@ -102,66 +102,13 @@ export default function TestPage() {
                   className="cursor-pointer group"
                   onClick={() => handleOptionSelect(option.id)}
                 >
-                  <div
-                    className="relative overflow-hidden rounded-lg border-2 border-gray-200 
-                              hover:border-gray-400 transition-all duration-200 
-                              group-hover:shadow-md transform group-hover:scale-105"
-                  >
-                    <div className="aspect-square relative bg-white border rounded-lg overflow-hidden">
-                      {/* Debug marker for first option */}
-                      {option.id === "q1-a" && (
-                        <div className="absolute top-0 left-0 w-8 h-8 bg-red-500 z-10 text-white text-xs flex items-center justify-center">
-                          Q1A
-                        </div>
-                      )}
-                      <img
-                        src={option.imagePath}
-                        alt={`Option ${option.id}`}
-                        className="w-full h-full object-cover"
-                        onLoad={() => {
-                          console.log(
-                            "✅ SUCCESS: Image loaded:",
-                            option.imagePath
-                          );
-                        }}
-                        onError={(e) => {
-                          console.error(
-                            "❌ ERROR: Image failed to load:",
-                            option.imagePath
-                          );
-                          console.error("Error event:", e);
-                          // Try to set a fallback
-                          e.currentTarget.src =
-                            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmZjY2NjIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVSUk9SPC90ZXh0Pjx0ZXh0IHg9IjUwJSIgeT0iNjUlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiPiR7b3B0aW9uLmltYWdlUGF0aH08L3RleHQ+PC9zdmc+";
-                        }}
-                        loading="eager"
-                      />
-                    </div>
-
-                    {/* Overlay on hover */}
-                    <div
-                      className="absolute inset-0 bg-black bg-opacity-0 
-                                group-hover:bg-opacity-10 transition-all duration-200 
-                                flex items-center justify-center"
-                    >
-                      <div
-                        className="w-8 h-8 bg-white rounded-full shadow-lg 
-                                  opacity-0 group-hover:opacity-100 transition-opacity duration-200
-                                  flex items-center justify-center"
-                      >
-                        <svg
-                          className="w-4 h-4 text-gray-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
+                  <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden mb-3 border-2 border-gray-200 hover:border-gray-400 group-hover:shadow-md group-hover:scale-105 transition-all duration-200">
+                    <img
+                      src={option.imagePath}
+                      alt={`Option ${option.id} - ${option.value}`}
+                      className="w-full h-full object-cover"
+                      draggable={false}
+                    />
                   </div>
                 </div>
               );
