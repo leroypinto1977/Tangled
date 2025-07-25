@@ -65,17 +65,21 @@ export default function TestPage() {
         }
       });
 
-      // Navigate to clip selection page with answers
+      // Navigate to clip selection page with both option IDs and answer values
       const queryParams = new URLSearchParams();
       queryParams.set(
         "answers",
         encodeURIComponent(JSON.stringify(selectedAnswers))
       );
+      queryParams.set(
+        "optionIds",
+        encodeURIComponent(JSON.stringify(newAnswers))
+      );
       if (completionTime) {
         queryParams.set("completionTime", completionTime.toString());
       }
 
-      window.location.href = `/clip-selection?${queryParams.toString()}`;
+      window.location.href = `/final-selection?${queryParams.toString()}`;
     } else {
       setTimeout(() => {
         setCurrentQuestion(currentQuestion + 1);

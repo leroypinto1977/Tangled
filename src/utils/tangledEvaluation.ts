@@ -1,12 +1,6 @@
 // Tangled Test Evaluation System
 // Following the exact blueprint methodology from the PDF
 
-import {
-  clipSelectionData,
-  hasCommonAlphabet,
-  type ClipData,
-} from "@/data/clipSelectionData";
-
 export interface EvaluationResult {
   orangeBoxResults: Record<string, number>; // Step 1: Character counts from orange boxes
   blueBoxPairs: Array<{ chars: string; difference: number }>; // Step 2: Blue box pairs
@@ -17,7 +11,7 @@ export interface EvaluationResult {
     section3: string[]; // >=3 pairs
   }; // Step 4: Purple box categorization
   greenBoxResults: string[]; // Step 4: Green box T additions
-  pinkBoxResult: string; // Step 5: Chosen clip from selection
+  pinkBoxResult: string; // Step 5: Section selections from Table 2 (A, B, C)
   supplementaryCheck: {
     totalVs: number;
     totalWs: number;
@@ -75,7 +69,10 @@ export class TangledEvaluator {
   }
 
   // Step 4: Categorize into purple boxes and handle green box
-  private categorizePurpleAndGreen(yellowBoxValues: Record<string, number>): {
+  private categorizePurpleAndGreen(
+    yellowBoxValues: Record<string, number>,
+    orangeBoxResults: Record<string, number>
+  ): {
     purpleBoxResults: {
       section1: string[];
       section2: string[];
@@ -88,21 +85,24 @@ export class TangledEvaluator {
       section2: [] as string[], // >=4
       section3: [] as string[], // >=3
     };
-    const greenBoxResults: string[] = [];
 
-    Object.entries(yellowBoxValues).forEach(([pair, value]) => {
-      if (value >= 5) {
-        // Section 1: Move to each pair value and write down alphabet with highest value
-        const char1 = pair[0];
-        const char2 = pair[1];
-        // For now, we'll add the pair itself - this would need the original orange box values to determine highest
-        purpleBoxResults.section1.push(pair);
-      } else if (value >= 4) {
-        // Section 2: Similar logic
-        purpleBoxResults.section2.push(pair);
-      } else if (value >= 3) {
-        // Section 3: Similar logic
-        purpleBoxResults.section3.push(pair);
+    // For each pair, find the character with the highest value and place in appropriate section
+    Object.entries(yellowBoxValues).forEach(([pair, difference]) => {
+      const char1 = pair[0];
+      const char2 = pair[1];
+      const count1 = orangeBoxResults[char1] || 0;
+      const count2 = orangeBoxResults[char2] || 0;
+
+      // Get the character with the highest value
+      const higherChar =
+        count1 > count2 ? char1 : count2 > count1 ? char2 : char1;
+
+      if (difference >= 5) {
+        purpleBoxResults.section1.push(higherChar);
+      } else if (difference >= 4) {
+        purpleBoxResults.section2.push(higherChar);
+      } else if (difference >= 3) {
+        purpleBoxResults.section3.push(higherChar);
       }
     });
 
@@ -111,47 +111,25 @@ export class TangledEvaluator {
       ...purpleBoxResults.section1,
       ...purpleBoxResults.section2,
       ...purpleBoxResults.section3,
-    ].join("");
+    ];
 
+    // Count occurrences of each character
     const charCounts: Record<string, number> = {};
-    for (const char of allPurpleChars) {
+    allPurpleChars.forEach((char) => {
       charCounts[char] = (charCounts[char] || 0) + 1;
-    }
+    });
 
-    // Add "T" for counts >=2
+    // Green box logic: if character count >=2, place "T"; otherwise place the character itself
+    const greenBoxResults: string[] = [];
     Object.entries(charCounts).forEach(([char, count]) => {
       if (count >= 2) {
         greenBoxResults.push("T");
-      } else if (count === 1) {
-        // No action for count = 1
-      } else if (count === 0) {
-        greenBoxResults.push("U");
+      } else {
+        greenBoxResults.push(char);
       }
     });
 
     return { purpleBoxResults, greenBoxResults };
-  }
-
-  // Step 5: Choose favorite clip from selection (this would be user input)
-  private chooseFavoriteClip(selectedClipId?: string): string {
-    // If no clip is selected, return the first clip as default
-    const clipId = selectedClipId || clipSelectionData[0].id;
-    const clip = clipSelectionData.find((c) => c.id === clipId);
-
-    if (!clip) return clipSelectionData[0].id;
-
-    return clipId;
-  }
-
-  // Step 6: Check if common alphabet exists in all three codes
-  private checkCommonAlphabet(clipId: string): {
-    hasCommon: boolean;
-    commonChar?: string;
-  } {
-    const clip = clipSelectionData.find((c) => c.id === clipId);
-    if (!clip) return { hasCommon: false };
-
-    return hasCommonAlphabet(clip.codes);
   }
 
   // Step 7: Supplementary task - check total values of V & W
@@ -172,15 +150,17 @@ export class TangledEvaluator {
     });
 
     let selectedValue: string;
+
+    // If both V and W counts are >= 11, place both "UV"
     if (totalVs >= 11 && totalWs >= 11) {
-      // Select V/W with higher value
-      selectedValue = totalVs > totalWs ? "V" : "W";
+      selectedValue = "UV";
     } else if (totalVs >= 11) {
       selectedValue = "V";
     } else if (totalWs >= 11) {
       selectedValue = "W";
     } else {
-      selectedValue = totalVs > totalWs ? "V" : "W";
+      // If neither reaches 11, select the higher one
+      selectedValue = totalVs > totalWs ? "V" : totalWs > totalVs ? "W" : "V";
     }
 
     return { totalVs, totalWs, selectedValue };
@@ -195,23 +175,27 @@ export class TangledEvaluator {
   // Step 9: Combine all values for final result
   private combineForFinalResult(
     greenBoxResults: string[],
-    pinkBoxResult: string,
+    table2Results: string,
     supplementaryResult: string
   ): string {
-    // Put all values from pink, green, and purple boxes together in white box
+    // Combine all values from green box, Table 2 (section selections), and supplementary
     const allValues = [
       ...greenBoxResults,
-      pinkBoxResult,
-      supplementaryResult,
-    ].filter((val) => val && val !== "PLACEHOLDER_CLIP");
+      ...table2Results.split(""), // Split string into individual characters
+      ...supplementaryResult.split(""), // Split string into individual characters
+    ].filter((val) => val && val.trim()); // Remove empty values
 
-    return allValues.join("");
+    // Find common letters or combine all unique values
+    const uniqueValues = [...new Set(allValues)];
+
+    return uniqueValues.join("");
   }
 
   // Main evaluation method
   public evaluate(
     selectedAnswers: string[],
-    selectedClipId?: string
+    selectedClipId?: string,
+    sectionSelections?: string[]
   ): EvaluationResult {
     // Step 1: Fill orange boxes
     const orangeBoxResults = this.fillOrangeBoxes(selectedAnswers);
@@ -223,19 +207,22 @@ export class TangledEvaluator {
     const yellowBoxValues = this.fillYellowBoxes(blueBoxPairs);
 
     // Step 4: Categorize purple boxes and handle green box
-    const { purpleBoxResults, greenBoxResults } =
-      this.categorizePurpleAndGreen(yellowBoxValues);
+    const { purpleBoxResults, greenBoxResults } = this.categorizePurpleAndGreen(
+      yellowBoxValues,
+      orangeBoxResults
+    );
 
-    // Step 5: Choose favorite clip
-    const pinkBoxResult = this.chooseFavoriteClip(selectedClipId);
+    // Step 5: Use section selections for Table 2 (A, B, C dark blue boxes)
+    // These are the user's favorite selections from each section of the first 15 questions
+    const table2Results = sectionSelections || [];
 
     // Step 7: Supplementary check
     const supplementaryCheck = this.performSupplementaryCheck(selectedAnswers);
 
-    // Step 9: Final result
+    // Step 9: Final result - combine Table 2 results + green box + supplementary
     const finalResult = this.combineForFinalResult(
       greenBoxResults,
-      pinkBoxResult,
+      table2Results.join(""), // Combine the section selections
       supplementaryCheck.selectedValue
     );
 
@@ -245,7 +232,7 @@ export class TangledEvaluator {
       yellowBoxValues,
       purpleBoxResults,
       greenBoxResults,
-      pinkBoxResult,
+      pinkBoxResult: table2Results.join(""), // Use section selections instead of clip
       supplementaryCheck,
       finalResult,
     };
@@ -254,13 +241,18 @@ export class TangledEvaluator {
   // Helper method to get a simplified result for display
   public getSimplifiedResult(
     selectedAnswers: string[],
-    selectedClipId?: string
+    selectedClipId?: string,
+    sectionSelections?: string[]
   ): {
     characterCounts: Record<string, number>;
     dominantTraits: string[];
     evaluationDetails: EvaluationResult;
   } {
-    const evaluation = this.evaluate(selectedAnswers, selectedClipId);
+    const evaluation = this.evaluate(
+      selectedAnswers,
+      selectedClipId,
+      sectionSelections
+    );
 
     // Get dominant traits from orange box results
     const sortedTraits = Object.entries(evaluation.orangeBoxResults)
@@ -282,7 +274,12 @@ export const tangledEvaluator = new TangledEvaluator();
 // Utility function for components
 export const evaluateTest = (
   selectedAnswers: string[],
-  selectedClipId?: string
+  selectedClipId?: string,
+  sectionSelections?: string[]
 ) => {
-  return tangledEvaluator.getSimplifiedResult(selectedAnswers, selectedClipId);
+  return tangledEvaluator.getSimplifiedResult(
+    selectedAnswers,
+    selectedClipId,
+    sectionSelections
+  );
 };

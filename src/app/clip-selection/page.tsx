@@ -10,17 +10,30 @@ import { saveTestSession } from "@/utils/scoreTracker";
 export default function ClipSelectionPage() {
   const [selectedClip, setSelectedClip] = useState<string>("");
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [selectedOptionIds, setSelectedOptionIds] = useState<string[]>([]);
+  const [sectionSelections, setSectionSelections] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Get the selected answers from URL params
+    // Get all the data from URL params
     const answers = searchParams.get("answers");
-    const completionTime = searchParams.get("completionTime");
+    const optionIds = searchParams.get("optionIds");
+    const sections = searchParams.get("sectionSelections");
 
     if (answers) {
       const parsedAnswers = JSON.parse(decodeURIComponent(answers));
       setSelectedAnswers(parsedAnswers);
+    }
+
+    if (optionIds) {
+      const parsedOptionIds = JSON.parse(decodeURIComponent(optionIds));
+      setSelectedOptionIds(parsedOptionIds);
+    }
+
+    if (sections) {
+      const parsedSections = JSON.parse(decodeURIComponent(sections));
+      setSectionSelections(parsedSections);
     }
 
     setLoading(false);
@@ -33,8 +46,12 @@ export default function ClipSelectionPage() {
   const handleProceed = () => {
     if (!selectedClip) return;
 
-    // Evaluate test with selected clip
-    const evaluation = evaluateTest(selectedAnswers, selectedClip);
+    // Evaluate test with selected clip and section selections
+    const evaluation = evaluateTest(
+      selectedAnswers,
+      selectedClip,
+      sectionSelections
+    );
 
     // Calculate completion time
     const completionTimeParam = searchParams.get("completionTime");
@@ -42,11 +59,13 @@ export default function ClipSelectionPage() {
       ? parseInt(completionTimeParam)
       : undefined;
 
-    // Save the test session with clip selection
+    // Save the test session with clip selection and section selections
     const sessionId = saveTestSession(
-      selectedAnswers.map((answer, index) => `q${index}_${answer}`), // Convert to option IDs
+      selectedOptionIds, // Use the actual option IDs from the test
       evaluation.characterCounts,
-      completionTime
+      completionTime,
+      selectedClip, // Pass the selected clip
+      sectionSelections // Pass the section selections (A, B, C values for Table 2)
     );
 
     // Build query params for results page

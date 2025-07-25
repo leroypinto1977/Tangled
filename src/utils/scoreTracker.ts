@@ -9,6 +9,8 @@ export interface TestSession {
   dominantTraits: string[]; // Top 3 traits
   totalQuestions: number;
   completionTime?: number; // Time taken in minutes
+  selectedClip?: string; // Selected clip ID from clip selection step
+  sectionSelections?: string[]; // Final selections from sections A, B, C (3 values for Table 2)
 }
 
 export interface ScoreAnalysis {
@@ -30,7 +32,9 @@ class ScoreTracker {
   saveSession(
     selectedOptions: string[],
     results: Record<string, number>,
-    completionTime?: number
+    completionTime?: number,
+    selectedClip?: string,
+    sectionSelections?: string[]
   ): string {
     const sessionId = this.generateSessionId();
     const session: TestSession = {
@@ -41,6 +45,8 @@ class ScoreTracker {
       dominantTraits: this.getDominantTraits(results),
       totalQuestions: selectedOptions.length,
       completionTime,
+      selectedClip,
+      sectionSelections,
     };
 
     const sessions = this.getAllSessions();
@@ -358,9 +364,17 @@ export const getResultsWithAnalysis = (results: Record<string, number>) => {
 export const saveTestSession = (
   selectedOptions: string[],
   results: Record<string, number>,
-  completionTime?: number
+  completionTime?: number,
+  selectedClip?: string,
+  sectionSelections?: string[]
 ) => {
-  return scoreTracker.saveSession(selectedOptions, results, completionTime);
+  return scoreTracker.saveSession(
+    selectedOptions,
+    results,
+    completionTime,
+    selectedClip,
+    sectionSelections
+  );
 };
 
 export const getTestHistory = () => {
