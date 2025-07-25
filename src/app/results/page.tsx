@@ -1737,16 +1737,15 @@ function ResultsContent() {
                           </div>
                           <div className="flex-1">
                             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                              VW Personality
+                              Affective / Rational
                             </h3>
                             <p className="text-gray-700 leading-relaxed">
                               {/* Use the previously provided description for VW here. Replace below with your actual description if needed. */}
-                              You possess the strengths of both V and W:
-                              analytical, visionary, and adaptable. This unique
-                              blend allows you to approach challenges with
-                              creativity and resilience, making you well-suited
-                              for dynamic environments and complex
-                              problem-solving.
+                              You usually maintain a balance between emotion and
+                              logic. You express your feelings adequately and
+                              you are able to integrate them into your
+                              judgements and decisions. Consequently your
+                              opinions and positions seem reasonable and fair.
                             </p>
                           </div>
                         </div>
