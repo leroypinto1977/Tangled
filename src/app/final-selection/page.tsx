@@ -216,14 +216,14 @@ function FinalSelectionContent() {
                         />
                       </div>
 
-                      <div className="text-center">
+                      {/* <div className="text-center">
                         <div className="text-xs text-gray-500 mb-1">
                           Option Value
                         </div>
                         <div className="font-mono text-sm text-gray-700 bg-gray-100 px-2 py-1 rounded">
                           {selectedOption.value}
                         </div>
-                      </div>
+                      </div> */}
 
                       {sectionSelections[currentSection] ===
                         selectedOptionId && (

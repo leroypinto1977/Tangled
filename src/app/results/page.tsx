@@ -1727,26 +1727,63 @@ function ResultsContent() {
 
                 {personalityTraits.length > 0 ? (
                   <div className="space-y-6">
-                    {personalityTraits.map((trait, index) => (
-                      <div
-                        key={index}
-                        className="border-l-4 border-blue-500 pl-6 py-4 bg-blue-50 rounded-r-lg"
-                      >
+                    {/* Check for both V and W in individualLetters and render VW if both are present */}
+                    {individualLetters.includes("V") &&
+                    individualLetters.includes("W") ? (
+                      <div className="border-l-4 border-blue-500 pl-6 py-4 bg-blue-50 rounded-r-lg">
                         <div className="flex items-start space-x-4">
                           <div className="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
-                            {individualLetters[index]}
+                            VW
                           </div>
                           <div className="flex-1">
                             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                              {trait.name}
+                              VW Personality
                             </h3>
                             <p className="text-gray-700 leading-relaxed">
-                              {trait.description}
+                              {/* Use the previously provided description for VW here. Replace below with your actual description if needed. */}
+                              You possess the strengths of both V and W:
+                              analytical, visionary, and adaptable. This unique
+                              blend allows you to approach challenges with
+                              creativity and resilience, making you well-suited
+                              for dynamic environments and complex
+                              problem-solving.
                             </p>
                           </div>
                         </div>
                       </div>
-                    ))}
+                    ) : null}
+                    {/* Render other traits as usual, skipping V and W if both are present */}
+                    {personalityTraits.map((trait, index) => {
+                      // If both V and W are present, skip rendering them individually
+                      if (
+                        individualLetters.includes("V") &&
+                        individualLetters.includes("W") &&
+                        (individualLetters[index] === "V" ||
+                          individualLetters[index] === "W")
+                      ) {
+                        return null;
+                      }
+                      return (
+                        <div
+                          key={index}
+                          className="border-l-4 border-blue-500 pl-6 py-4 bg-blue-50 rounded-r-lg"
+                        >
+                          <div className="flex items-start space-x-4">
+                            <div className="bg-blue-600 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg flex-shrink-0">
+                              {individualLetters[index]}
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                                {trait.name}
+                              </h3>
+                              <p className="text-gray-700 leading-relaxed">
+                                {trait.description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-8">
